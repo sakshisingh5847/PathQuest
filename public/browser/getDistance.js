@@ -19,7 +19,7 @@ function getDistance(nodeOne, nodeTwo) {
     if (nodeOne.direction === "up") {
       return [3, ["r", "r", "f"], "down"];
     } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
+      return [2, ["r", "f"], "down"];ī
     } else if (nodeOne.direction === "left") {
       return [2, ["l", "f"], "down"];
     } else if (nodeOne.direction === "down") {

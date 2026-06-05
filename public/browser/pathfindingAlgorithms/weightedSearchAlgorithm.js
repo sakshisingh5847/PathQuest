@@ -1,7 +1,4 @@
-const astar = require("./astar");
-
 function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
-  if (name === "astar") return astar(nodes, start, target, nodesToAnimate, boardArray, name)
   if (!start || !target || start === target) {
     return false;
   }

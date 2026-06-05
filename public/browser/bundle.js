@@ -1,4 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+//Import algorithms
 const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
 const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
 
@@ -174,132 +175,11 @@ function launchAnimations(board, success, type, object, algorithm, heuristic) {
 
 module.exports = launchAnimations;
 
-},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":8,"../pathfindingAlgorithms/weightedSearchAlgorithm":9}],2:[function(require,module,exports){
-const weightedSearchAlgorithm = require("../pathfindingAlgorithms/weightedSearchAlgorithm");
-const unweightedSearchAlgorithm = require("../pathfindingAlgorithms/unweightedSearchAlgorithm");
-
-function launchInstantAnimations(board, success, type, object, algorithm, heuristic) {
-  let nodes = object ? board.objectNodesToAnimate.slice(0) : board.nodesToAnimate.slice(0);
-  let shortestNodes;
-  for (let i = 0; i < nodes.length; i++) {
-    if (i === 0) {
-      change(nodes[i]);
-    } else {
-      change(nodes[i], nodes[i - 1]);
-    }
-  }
-  if (object) {
-    board.objectNodesToAnimate = [];
-    if (success) {
-      board.drawShortestPath(board.object, board.start, "object");
-      board.clearNodeStatuses();
-      let newSuccess;
-      if (type === "weighted") {
-        newSuccess = weightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm, heuristic);
-      } else {
-        newSuccess = unweightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-      }
-      launchInstantAnimations(board, newSuccess, type);
-      shortestNodes = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
-    } else {
-      console.log("Failure.");
-      board.reset();
-      return;
-    }
-  } else {
-    board.nodesToAnimate = [];
-    if (success) {
-      if (board.isObject) {
-        board.drawShortestPath(board.target, board.object);
-      } else {
-        board.drawShortestPath(board.target, board.start);
-      }
-      shortestNodes = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
-    } else {
-      console.log("Failure");
-      board.reset();
-      return;
-    }
-  }
-
-  let j;
-  for (j = 0; j < shortestNodes.length; j++) {
-    if (j === 0) {
-      shortestPathChange(shortestNodes[j]);
-    } else {
-      shortestPathChange(shortestNodes[j], shortestNodes[j - 1]);
-    }
-  }
-  board.reset();
-  if (object) {
-    shortestPathChange(board.nodes[board.target], shortestNodes[j - 1]);
-    board.objectShortestPathNodesToAnimate = [];
-    board.shortestPathNodesToAnimate = [];
-    board.clearNodeStatuses();
-    let newSuccess;
-    if (type === "weighted") {
-      newSuccess = weightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-    } else {
-      newSuccess = unweightedSearchAlgorithm(board.nodes, board.object, board.target, board.nodesToAnimate, board.boardArray, algorithm);
-    }
-    launchInstantAnimations(board, newSuccess, type);
-  } else {
-    shortestPathChange(board.nodes[board.target], shortestNodes[j - 1]);
-    board.objectShortestPathNodesToAnimate = [];
-    board.shortestPathNodesToAnimate = [];
-  }
-
-  function change(currentNode, previousNode) {
-    let currentHTMLNode = document.getElementById(currentNode.id);
-    let relevantClassNames = ["start", "shortest-path", "instantshortest-path", "instantshortest-path weight"];
-    if (previousNode) {
-      let previousHTMLNode = document.getElementById(previousNode.id);
-      if (!relevantClassNames.includes(previousHTMLNode.className)) {
-        if (object) {
-          previousHTMLNode.className = previousNode.weight === 15 ? "instantvisitedobject weight" : "instantvisitedobject";
-        } else {
-          previousHTMLNode.className = previousNode.weight === 15 ? "instantvisited weight" : "instantvisited";
-        }
-      }
-    }
-  }
-
-  function shortestPathChange(currentNode, previousNode) {
-    let currentHTMLNode = document.getElementById(currentNode.id);
-    if (type === "unweighted") {
-      currentHTMLNode.className = "shortest-path-unweighted";
-    } else {
-      if (currentNode.direction === "up") {
-        currentHTMLNode.className = "shortest-path-up";
-      } else if (currentNode.direction === "down") {
-        currentHTMLNode.className = "shortest-path-down";
-      } else if (currentNode.direction === "right") {
-        currentHTMLNode.className = "shortest-path-right";
-      } else if (currentNode.direction === "left") {
-        currentHTMLNode.className = "shortest-path-left";
-      }
-    }
-    if (previousNode) {
-      let previousHTMLNode = document.getElementById(previousNode.id);
-      previousHTMLNode.className = previousNode.weight === 15 ? "instantshortest-path weight" : "instantshortest-path";
-    } else {
-      let element = document.getElementById(board.start);
-      element.className = "startTransparent";
-    }
-  }
-
-};
-
-module.exports = launchInstantAnimations;
-
-},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":8,"../pathfindingAlgorithms/weightedSearchAlgorithm":9}],3:[function(require,module,exports){
+},{"../pathfindingAlgorithms/unweightedSearchAlgorithm":5,"../pathfindingAlgorithms/weightedSearchAlgorithm":6}],2:[function(require,module,exports){
 const Node = require("./node");
 const launchAnimations = require("./animations/launchAnimations");
-const launchInstantAnimations = require("./animations/launchInstantAnimations");
 const weightedSearchAlgorithm = require("./pathfindingAlgorithms/weightedSearchAlgorithm");
 const unweightedSearchAlgorithm = require("./pathfindingAlgorithms/unweightedSearchAlgorithm");
-const astar = require("./pathfindingAlgorithms/astar");
-const bidirectional = require("./pathfindingAlgorithms/bidirectional");
 const getDistance = require("./getDistance");
 
 function Board(height, width) {
@@ -493,56 +373,17 @@ Board.prototype.changeNormalNode = function(currentNode) {
 
 Board.prototype.drawShortestPath = function(targetNodeId, startNodeId, object) {
   let currentNode;
-  if (this.currentAlgorithm !== "bidirectional") {
-    currentNode = this.nodes[this.nodes[targetNodeId].previousNode];
-    if (object) {
-      while (currentNode.id !== startNodeId) {
-        this.objectShortestPathNodesToAnimate.unshift(currentNode);
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-    } else {
-      while (currentNode.id !== startNodeId) {
-        this.shortestPathNodesToAnimate.unshift(currentNode);
-        document.getElementById(currentNode.id).className = `shortest-path`;
-        currentNode = this.nodes[currentNode.previousNode];
-      }
+  currentNode = this.nodes[this.nodes[targetNodeId].previousNode];
+  if (object) {
+    while (currentNode.id !== startNodeId) {
+      this.objectShortestPathNodesToAnimate.unshift(currentNode);
+      currentNode = this.nodes[currentNode.previousNode];
     }
   } else {
-    if (this.middleNode !== this.target && this.middleNode !== this.start) {
-      currentNode = this.nodes[this.nodes[this.middleNode].previousNode];
-      secondCurrentNode = this.nodes[this.nodes[this.middleNode].otherpreviousNode];
-      if (secondCurrentNode.id === this.target) {
-        this.nodes[this.target].direction = getDistance(this.nodes[this.middleNode], this.nodes[this.target])[2];
-      }
-      if (this.nodes[this.middleNode].weight === 0) {
-        document.getElementById(this.middleNode).className = `shortest-path`;
-      } else {
-        document.getElementById(this.middleNode).className = `shortest-path weight`;
-      }
-      while (currentNode.id !== startNodeId) {
-        this.shortestPathNodesToAnimate.unshift(currentNode);
-        document.getElementById(currentNode.id).className = `shortest-path`;
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-      while (secondCurrentNode.id !== targetNodeId) {
-        this.shortestPathNodesToAnimate.unshift(secondCurrentNode);
-        document.getElementById(secondCurrentNode.id).className = `shortest-path`;
-        if (secondCurrentNode.otherpreviousNode === targetNodeId) {
-          if (secondCurrentNode.otherdirection === "left") {
-            secondCurrentNode.direction = "right";
-          } else if (secondCurrentNode.otherdirection === "right") {
-            secondCurrentNode.direction = "left";
-          } else if (secondCurrentNode.otherdirection === "up") {
-            secondCurrentNode.direction = "down";
-          } else if (secondCurrentNode.otherdirection === "down") {
-            secondCurrentNode.direction = "up";
-          }
-          this.nodes[this.target].direction = getDistance(secondCurrentNode, this.nodes[this.target])[2];
-        }
-        secondCurrentNode = this.nodes[secondCurrentNode.otherpreviousNode]
-      }
-    } else {
-      document.getElementById(this.nodes[this.target].previousNode).className = `shortest-path`;
+    while (currentNode.id !== startNodeId) {
+      this.shortestPathNodesToAnimate.unshift(currentNode);
+      document.getElementById(currentNode.id).className = `shortest-path`;
+      currentNode = this.nodes[currentNode.previousNode];
     }
   }
 };
@@ -566,63 +407,19 @@ Board.prototype.addShortestPath = function(targetNodeId, startNodeId, object) {
 Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, type, object) {
   let board = this;
   let currentNode;
-  let secondCurrentNode;
   let currentNodesToAnimate;
 
-  if (board.currentAlgorithm !== "bidirectional") {
-    currentNode = board.nodes[board.nodes[targetNodeId].previousNode];
-    if (object) {
-      board.objectShortestPathNodesToAnimate.push("object");
-      currentNodesToAnimate = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
-    } else {
-      currentNodesToAnimate = [];
-      while (currentNode.id !== startNodeId) {
-        currentNodesToAnimate.unshift(currentNode);
-        currentNode = board.nodes[currentNode.previousNode];
-      }
-    }
-  } else {
-    if (board.middleNode !== board.target && board.middleNode !== board.start) {
-      currentNode = board.nodes[board.nodes[board.middleNode].previousNode];
-      secondCurrentNode = board.nodes[board.nodes[board.middleNode].otherpreviousNode];
-      if (secondCurrentNode.id === board.target) {
-        board.nodes[board.target].direction = getDistance(board.nodes[board.middleNode], board.nodes[board.target])[2];
-      }
-      if (object) {
-
-      } else {
-        currentNodesToAnimate = [];
-        board.nodes[board.middleNode].direction = getDistance(currentNode, board.nodes[board.middleNode])[2];
-        while (currentNode.id !== startNodeId) {
-          currentNodesToAnimate.unshift(currentNode);
-          currentNode = board.nodes[currentNode.previousNode];
-        }
-        currentNodesToAnimate.push(board.nodes[board.middleNode]);
-        while (secondCurrentNode.id !== targetNodeId) {
-          if (secondCurrentNode.otherdirection === "left") {
-            secondCurrentNode.direction = "right";
-          } else if (secondCurrentNode.otherdirection === "right") {
-            secondCurrentNode.direction = "left";
-          } else if (secondCurrentNode.otherdirection === "up") {
-            secondCurrentNode.direction = "down";
-          } else if (secondCurrentNode.otherdirection === "down") {
-            secondCurrentNode.direction = "up";
-          }
-          currentNodesToAnimate.push(secondCurrentNode);
-          if (secondCurrentNode.otherpreviousNode === targetNodeId) {
-            board.nodes[board.target].direction = getDistance(secondCurrentNode, board.nodes[board.target])[2];
-          }
-          secondCurrentNode = board.nodes[secondCurrentNode.otherpreviousNode]
-        }
-    }
+  currentNode = board.nodes[board.nodes[targetNodeId].previousNode];
+  if (object) {
+    board.objectShortestPathNodesToAnimate.push("object");
+    currentNodesToAnimate = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
   } else {
     currentNodesToAnimate = [];
-    let target = board.nodes[board.target];
-    currentNodesToAnimate.push(board.nodes[target.previousNode], target);
+    while (currentNode.id !== startNodeId) {
+      currentNodesToAnimate.unshift(currentNode);
+      currentNode = board.nodes[currentNode.previousNode];
+    }
   }
-
-}
-
 
   timeout(0);
 
@@ -716,28 +513,10 @@ Board.prototype.clearPath = function(clickedButton) {
     } else {
       this.clearPath("clickedButton");
       this.toggleButtons();
-      let weightedAlgorithms = ["dijkstra", "CLA", "greedy"];
+      let weightedAlgorithms = ["dijkstra", "greedy"];
       let unweightedAlgorithms = ["dfs", "bfs"];
       let success;
-      if (this.currentAlgorithm === "bidirectional") {
-        if (!this.numberOfObjects) {
-          success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-          launchAnimations(this, success, "weighted");
-        } else {
-          this.isObject = true;
-        }
-        this.algoDone = true;
-      } else if (this.currentAlgorithm === "astar") {
-        if (!this.numberOfObjects) {
-          success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-          launchAnimations(this, success, "weighted");
-        } else {
-          this.isObject = true;
-          success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-          launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
-        }
-        this.algoDone = true;
-      } else if (weightedAlgorithms.includes(this.currentAlgorithm)) {
+      if (weightedAlgorithms.includes(this.currentAlgorithm)) {
         if (!this.numberOfObjects) {
           success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
           launchAnimations(this, success, "weighted");
@@ -762,7 +541,7 @@ Board.prototype.clearPath = function(clickedButton) {
   }
 
   this.algoDone = false;
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     currentNode.previousNode = null;
     currentNode.distance = Infinity;
@@ -784,12 +563,12 @@ Board.prototype.clearPath = function(clickedButton) {
       currentNode.status = "unvisited";
       currentHTMLNode.className = "unvisited weight";
     }
-  });
+  }
 };
 
 Board.prototype.clearWalls = function() {
   this.clearPath("clickedButton");
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     let currentHTMLNode = document.getElementById(id);
     if (currentNode.status === "wall" || currentNode.weight === 15) {
@@ -797,11 +576,11 @@ Board.prototype.clearWalls = function() {
       currentNode.weight = 0;
       currentHTMLNode.className = "unvisited";
     }
-  });
-}
+  }
+};
 
 Board.prototype.clearWeights = function() {
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     let currentHTMLNode = document.getElementById(id);
     if (currentNode.weight === 15) {
@@ -809,11 +588,11 @@ Board.prototype.clearWeights = function() {
       currentNode.weight = 0;
       currentHTMLNode.className = "unvisited";
     }
-  });
-}
+  }
+};
 
 Board.prototype.clearNodeStatuses = function() {
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     currentNode.previousNode = null;
     currentNode.distance = Infinity;
@@ -825,58 +604,12 @@ Board.prototype.clearNodeStatuses = function() {
     if (!relevantStatuses.includes(currentNode.status)) {
       currentNode.status = "unvisited";
     }
-  })
+  }
 };
 
-Board.prototype.instantAlgorithm = function() {
-  let weightedAlgorithms = ["dijkstra", "CLA", "greedy"];
-  let unweightedAlgorithms = ["dfs", "bfs"];
-  let success;
-  if (this.currentAlgorithm === "bidirectional") {
-    if (!this.numberOfObjects) {
-      success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-    }
-    this.algoDone = true;
-  } else if (this.currentAlgorithm === "astar") {
-    if (!this.numberOfObjects) {
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted", "object", this.currentAlgorithm);
-    }
-    this.algoDone = true;
-  }
-  if (weightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!this.numberOfObjects) {
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
-    }
-    this.algoDone = true;
-  } else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!this.numberOfObjects) {
-      success = unweightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm);
-      launchInstantAnimations(this, success, "unweighted");
-    } else {
-      this.isObject = true;
-      success = unweightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm);
-      launchInstantAnimations(this, success, "unweighted", "object", this.currentAlgorithm);
-    }
-    this.algoDone = true;
-  }
-};
 
 Board.prototype.redoAlgorithm = function() {
   this.clearPath();
-  this.instantAlgorithm();
 };
 
 Board.prototype.reset = function(objectNotTransparent) {
@@ -903,7 +636,7 @@ Board.prototype.resetHTMLNodes = function() {
 Board.prototype.changeStartNodeImages = function() {
   let unweighted = ["bfs", "dfs"];
   let strikethrough = ["bfs", "dfs"];
-  let guaranteed = ["dijkstra", "astar"];
+  let guaranteed = ["dijkstra"];
   let name = "";
   if (this.currentAlgorithm === "bfs") {
     name = "Breath-first Search";
@@ -911,16 +644,8 @@ Board.prototype.changeStartNodeImages = function() {
     name = "Depth-first Search";
   } else if (this.currentAlgorithm === "dijkstra") {
     name = "Dijkstra's Algorithm";
-  } else if (this.currentAlgorithm === "astar") {
-    name = "A* Search";
   } else if (this.currentAlgorithm === "greedy") {
     name = "Greedy Best-first Search";
-  } else if (this.currentAlgorithm === "CLA" && this.currentHeuristic !== "extraPoweredManhattanDistance") {
-    name = "Swarm Algorithm";
-  } else if (this.currentAlgorithm === "CLA" && this.currentHeuristic === "extraPoweredManhattanDistance") {
-    name = "Convergent Swarm Algorithm";
-  } else if (this.currentAlgorithm === "bidirectional") {
-    name = "Bidirectional Swarm Algorithm";
   }
   if (unweighted.includes(this.currentAlgorithm)) {
     if (this.currentAlgorithm === "dfs") {
@@ -935,7 +660,7 @@ Board.prototype.changeStartNodeImages = function() {
       document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("triangle", "spaceship");
     }
   } else {
-    if (this.currentAlgorithm === "greedy" || this.currentAlgorithm === "CLA") {
+    if (this.currentAlgorithm === "greedy") {
       document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
     }
     document.getElementById("weightLegend").className = "";
@@ -945,15 +670,8 @@ Board.prototype.changeStartNodeImages = function() {
       document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("spaceship", "triangle");
     }
   }
-  if (this.currentAlgorithm === "bidirectional") {
-
-    document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
-    document.getElementById("bombLegend").className = "strikethrough";
-    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav disabledA";
-  } else {
-    document.getElementById("bombLegend").className = "";
-    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
-  }
+  document.getElementById("bombLegend").className = "";
+  document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
   if (guaranteed.includes(this.currentAlgorithm)) {
     document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>guarantees</b></i> the shortest path!`;
   }
@@ -1024,30 +742,10 @@ Board.prototype.toggleButtons = function() {
       } else {
         this.clearPath("clickedButton");
         this.toggleButtons();
-        let weightedAlgorithms = ["dijkstra", "CLA", "CLA", "greedy"];
+        let weightedAlgorithms = ["dijkstra", "greedy"];
         let unweightedAlgorithms = ["dfs", "bfs"];
         let success;
-        if (this.currentAlgorithm === "bidirectional") {
-          if (!this.numberOfObjects) {
-            success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-            launchAnimations(this, success, "weighted");
-          } else {
-            this.isObject = true;
-            success = bidirectional(this.nodes, this.start, this.object, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-            launchAnimations(this, success, "weighted");
-          }
-          this.algoDone = true;
-        } else if (this.currentAlgorithm === "astar") {
-          if (!this.numberOfObjects) {
-            success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            launchAnimations(this, success, "weighted");
-          } else {
-            this.isObject = true;
-            success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            launchAnimations(this, success, "weighted", "object", this.currentAlgorithm);
-          }
-          this.algoDone = true;
-        } else if (weightedAlgorithms.includes(this.currentAlgorithm)) {
+        if (weightedAlgorithms.includes(this.currentAlgorithm)) {
           if (!this.numberOfObjects) {
             success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
             launchAnimations(this, success, "weighted");
@@ -1086,47 +784,11 @@ Board.prototype.toggleButtons = function() {
       document.getElementById("adjustSpeed").innerHTML = 'Speed: Slow<span class="caret"></span>';
     }
 
-    document.getElementById("startButtonBidirectional").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Bidirectional Swarm!</button>'
-      this.currentAlgorithm = "bidirectional";
-      this.currentHeuristic = "manhattanDistance";
-      if (this.numberOfObjects) {
-        let objectNodeId = this.object;
-        document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add a Bomb</a></li>';
-        document.getElementById(objectNodeId).className = "unvisited";
-        this.object = null;
-        this.numberOfObjects = 0;
-        this.nodes[objectNodeId].status = "unvisited";
-        this.isObject = false;
-      }
-      this.clearPath("clickedButton");
-      this.changeStartNodeImages();
-    }
+
 
     document.getElementById("startButtonDijkstra").onclick = () => {
       document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Dijkstra\'s!</button>'
       this.currentAlgorithm = "dijkstra";
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonAStar").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Swarm!</button>'
-      this.currentAlgorithm = "CLA";
-      this.currentHeuristic = "manhattanDistance"
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonAStar2").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize A*!</button>'
-      this.currentAlgorithm = "astar";
-      this.currentHeuristic = "poweredManhattanDistance"
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonAStar3").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Convergent Swarm!</button>'
-      this.currentAlgorithm = "CLA";
-      this.currentHeuristic = "extraPoweredManhattanDistance"
       this.changeStartNodeImages();
     }
 
@@ -1164,7 +826,7 @@ Board.prototype.toggleButtons = function() {
       let start = Math.floor(height / 2).toString() + "-" + Math.floor(width / 4).toString();
       let target = Math.floor(height / 2).toString() + "-" + Math.floor(3 * width / 4).toString();
 
-        Object.keys(this.nodes).forEach(id => {
+        for (let id in this.nodes) {
           let currentNode = this.nodes[id];
           let currentHTMLNode = document.getElementById(id);
           if (id === start) {
@@ -1188,7 +850,7 @@ Board.prototype.toggleButtons = function() {
           currentNode.relatesToObject = false;
           currentNode.overwriteObjectRelation = false;
 
-        });
+        }
       this.start = start;
       this.target = target;
       this.object = null;
@@ -1220,31 +882,29 @@ Board.prototype.toggleButtons = function() {
 
     document.getElementById("startButtonAddObject").onclick = () => {
       let innerHTML = document.getElementById("startButtonAddObject").innerHTML;
-      if (this.currentAlgorithm !== "bidirectional") {
-        if (innerHTML.includes("Add")) {
-          let r = Math.floor(this.height / 2);
-          let c = Math.floor(2 * this.width / 4);
-          let objectNodeId = `${r}-${c}`;
-          if (this.target === objectNodeId || this.start === objectNodeId || this.numberOfObjects === 1) {
-            console.log("Failure to place object.");
-          } else {
-            document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Remove Bomb</a></li>';
-            this.clearPath("clickedButton");
-            this.object = objectNodeId;
-            this.numberOfObjects = 1;
-            this.nodes[objectNodeId].status = "object";
-            document.getElementById(objectNodeId).className = "object";
-          }
+      if (innerHTML.includes("Add")) {
+        let r = Math.floor(this.height / 2);
+        let c = Math.floor(2 * this.width / 4);
+        let objectNodeId = `${r}-${c}`;
+        if (this.target === objectNodeId || this.start === objectNodeId || this.numberOfObjects === 1) {
+          console.log("Failure to place object.");
         } else {
-          let objectNodeId = this.object;
-          document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add Bomb</a></li>';
-          document.getElementById(objectNodeId).className = "unvisited";
-          this.object = null;
-          this.numberOfObjects = 0;
-          this.nodes[objectNodeId].status = "unvisited";
-          this.isObject = false;
+          document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Remove Bomb</a></li>';
           this.clearPath("clickedButton");
+          this.object = objectNodeId;
+          this.numberOfObjects = 1;
+          this.nodes[objectNodeId].status = "object";
+          document.getElementById(objectNodeId).className = "object";
         }
+      } else {
+        let objectNodeId = this.object;
+        document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add Bomb</a></li>';
+        document.getElementById(objectNodeId).className = "unvisited";
+        this.object = null;
+        this.numberOfObjects = 0;
+        this.nodes[objectNodeId].status = "unvisited";
+        this.isObject = false;
+        this.clearPath("clickedButton");
       }
 
     }
@@ -1252,20 +912,11 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonClearPath").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonClearWalls").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonClearBoard").className = "navbar-inverse navbar-nav";
-    if (this.currentAlgorithm !== "bidirectional") {
-      document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
-    }
+    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
 
     document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonBFS").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar2").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar3").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustFast").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustAverage").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustSlow").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonBidirectional").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonGreedy").className = "navbar-inverse navbar-nav";
     document.getElementById("actualStartButton").style.backgroundColor = "";
 
@@ -1274,12 +925,8 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonDFS").onclick = null;
     document.getElementById("startButtonBFS").onclick = null;
     document.getElementById("startButtonDijkstra").onclick = null;
-    document.getElementById("startButtonAStar").onclick = null;
     document.getElementById("startButtonGreedy").onclick = null;
     document.getElementById("startButtonAddObject").onclick = null;
-    document.getElementById("startButtonAStar2").onclick = null;
-    document.getElementById("startButtonAStar3").onclick = null;
-    document.getElementById("startButtonBidirectional").onclick = null;
 
     document.getElementById("startButtonClearPath").onclick = null;
     document.getElementById("startButtonClearWalls").onclick = null;
@@ -1300,11 +947,7 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonBFS").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonGreedy").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar2").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar3").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonBidirectional").className = "navbar-inverse navbar-nav disabledA";
 
     document.getElementById("actualStartButton").style.backgroundColor = "rgb(185, 15, 15)";
   }
@@ -1327,7 +970,7 @@ window.onkeyup = (e) => {
   newBoard.keyDown = false;
 }
 
-},{"./animations/launchAnimations":1,"./animations/launchInstantAnimations":2,"./getDistance":4,"./node":5,"./pathfindingAlgorithms/astar":6,"./pathfindingAlgorithms/bidirectional":7,"./pathfindingAlgorithms/unweightedSearchAlgorithm":8,"./pathfindingAlgorithms/weightedSearchAlgorithm":9}],4:[function(require,module,exports){
+},{"./animations/launchAnimations":1,"./getDistance":3,"./node":4,"./pathfindingAlgorithms/unweightedSearchAlgorithm":5,"./pathfindingAlgorithms/weightedSearchAlgorithm":6}],3:[function(require,module,exports){
 function getDistance(nodeOne, nodeTwo) {
   let currentCoordinates = nodeOne.id.split("-");
   let targetCoordinates = nodeTwo.id.split("-");
@@ -1349,7 +992,7 @@ function getDistance(nodeOne, nodeTwo) {
     if (nodeOne.direction === "up") {
       return [3, ["r", "r", "f"], "down"];
     } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
+      return [2, ["r", "f"], "down"];ī
     } else if (nodeOne.direction === "left") {
       return [2, ["l", "f"], "down"];
     } else if (nodeOne.direction === "down") {
@@ -1381,7 +1024,7 @@ function getDistance(nodeOne, nodeTwo) {
 
 module.exports = getDistance;
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 function Node(id, status) {
   this.id = id;
   this.status = status;
@@ -1410,691 +1053,7 @@ function Node(id, status) {
 
 module.exports = Node;
 
-},{}],6:[function(require,module,exports){
-function astar(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
-  if (!start || !target || start === target) {
-    return false;
-  }
-  nodes[start].distance = 0;
-  nodes[start].totalDistance = 0;
-  nodes[start].direction = "up";
-  let unvisitedNodes = Object.keys(nodes);
-  while (unvisitedNodes.length) {
-    let currentNode = closestNode(nodes, unvisitedNodes);
-    while (currentNode.status === "wall" && unvisitedNodes.length) {
-      currentNode = closestNode(nodes, unvisitedNodes)
-    }
-    if (currentNode.distance === Infinity) return false;
-    nodesToAnimate.push(currentNode);
-    currentNode.status = "visited";
-    if (currentNode.id === target) {
-      return "success!";
-    }
-    updateNeighbors(nodes, currentNode, boardArray, target, name, start, heuristic);
-  }
-}
-
-function closestNode(nodes, unvisitedNodes) {
-  let currentClosest, index;
-  for (let i = 0; i < unvisitedNodes.length; i++) {
-    if (!currentClosest || currentClosest.totalDistance > nodes[unvisitedNodes[i]].totalDistance) {
-      currentClosest = nodes[unvisitedNodes[i]];
-      index = i;
-    } else if (currentClosest.totalDistance === nodes[unvisitedNodes[i]].totalDistance) {
-      if (currentClosest.heuristicDistance > nodes[unvisitedNodes[i]].heuristicDistance) {
-        currentClosest = nodes[unvisitedNodes[i]];
-        index = i;
-      }
-    }
-  }
-  unvisitedNodes.splice(index, 1);
-  return currentClosest;
-}
-
-function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic) {
-  let neighbors = getNeighbors(node.id, nodes, boardArray);
-  for (let neighbor of neighbors) {
-    if (target) {
-      updateNode(node, nodes[neighbor], nodes[target], name, nodes, nodes[start], heuristic, boardArray);
-    } else {
-      updateNode(node, nodes[neighbor]);
-    }
-  }
-}
-
-function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
-  let distance = getDistance(currentNode, targetNode);
-  if (!targetNode.heuristicDistance) targetNode.heuristicDistance = manhattanDistance(targetNode, actualTargetNode);
-  let distanceToCompare = currentNode.distance + targetNode.weight + distance[0];
-  if (distanceToCompare < targetNode.distance) {
-    targetNode.distance = distanceToCompare;
-    targetNode.totalDistance = targetNode.distance + targetNode.heuristicDistance;
-    targetNode.previousNode = currentNode.id;
-    targetNode.path = distance[1];
-    targetNode.direction = distance[2];
-  }
-}
-
-function getNeighbors(id, nodes, boardArray) {
-  let coordinates = id.split("-");
-  let x = parseInt(coordinates[0]);
-  let y = parseInt(coordinates[1]);
-  let neighbors = [];
-  let potentialNeighbor;
-  if (boardArray[x - 1] && boardArray[x - 1][y]) {
-    potentialNeighbor = `${(x - 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x + 1] && boardArray[x + 1][y]) {
-    potentialNeighbor = `${(x + 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y - 1]) {
-    potentialNeighbor = `${x.toString()}-${(y - 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y + 1]) {
-    potentialNeighbor = `${x.toString()}-${(y + 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  // if (boardArray[x - 1] && boardArray[x - 1][y - 1]) {
-  //   potentialNeighbor = `${(x - 1).toString()}-${(y - 1).toString()}`
-  //   let potentialWallOne = `${(x - 1).toString()}-${y.toString()}`
-  //   let potentialWallTwo = `${x.toString()}-${(y - 1).toString()}`
-  //   if (nodes[potentialNeighbor].status !== "wall" && !(nodes[potentialWallOne].status === "wall" && nodes[potentialWallTwo].status === "wall")) neighbors.push(potentialNeighbor);
-  // }
-  // if (boardArray[x + 1] && boardArray[x + 1][y - 1]) {
-  //   potentialNeighbor = `${(x + 1).toString()}-${(y - 1).toString()}`
-  //   let potentialWallOne = `${(x + 1).toString()}-${y.toString()}`
-  //   let potentialWallTwo = `${x.toString()}-${(y - 1).toString()}`
-  //   if (nodes[potentialNeighbor].status !== "wall" && !(nodes[potentialWallOne].status === "wall" && nodes[potentialWallTwo].status === "wall")) neighbors.push(potentialNeighbor);
-  // }
-  // if (boardArray[x - 1] && boardArray[x - 1][y + 1]) {
-  //   potentialNeighbor = `${(x - 1).toString()}-${(y + 1).toString()}`
-  //   let potentialWallOne = `${(x - 1).toString()}-${y.toString()}`
-  //   let potentialWallTwo = `${x.toString()}-${(y + 1).toString()}`
-  //   if (nodes[potentialNeighbor].status !== "wall" && !(nodes[potentialWallOne].status === "wall" && nodes[potentialWallTwo].status === "wall")) neighbors.push(potentialNeighbor);
-  // }
-  // if (boardArray[x + 1] && boardArray[x + 1][y + 1]) {
-  //   potentialNeighbor = `${(x + 1).toString()}-${(y + 1).toString()}`
-  //   let potentialWallOne = `${(x + 1).toString()}-${y.toString()}`
-  //   let potentialWallTwo = `${x.toString()}-${(y + 1).toString()}`
-  //   if (nodes[potentialNeighbor].status !== "wall" && !(nodes[potentialWallOne].status === "wall" && nodes[potentialWallTwo].status === "wall")) neighbors.push(potentialNeighbor);
-  // }
-  return neighbors;
-}
-
-
-function getDistance(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1 && y1 === y2) {
-    if (nodeOne.direction === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.direction === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    } else if (nodeOne.direction === "up-right") {
-      return [1.5, null, "up"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2.5, null, "up"];
-    } else if (nodeOne.direction === "up-left") {
-      return [1.5, null, "up"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2.5, null, "up"];
-    }
-  } else if (x2 > x1 && y1 === y2) {
-    if (nodeOne.direction === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.direction === "down") {
-      return [1, ["f"], "down"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2.5, null, "down"];
-    } else if (nodeOne.direction === "down-right") {
-      return [1.5, null, "down"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2.5, null, "down"];
-    } else if (nodeOne.direction === "down-left") {
-      return [1.5, null, "down"];
-    }
-  }
-  if (y2 < y1 && x1 === x2) {
-    if (nodeOne.direction === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.direction === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.direction === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["r", "f"], "left"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2.5, null, "left"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2.5, null, "left"];
-    } else if (nodeOne.direction === "up-left") {
-      return [1.5, null, "left"];
-    } else if (nodeOne.direction === "down-left") {
-      return [1.5, null, "left"];
-    }
-  } else if (y2 > y1 && x1 === x2) {
-    if (nodeOne.direction === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.direction === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.direction === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["l", "f"], "right"];
-    } else if (nodeOne.direction === "up-right") {
-      return [1.5, null, "right"];
-    } else if (nodeOne.direction === "down-right") {
-      return [1.5, null, "right"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2.5, null, "right"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2.5, null, "right"];
-    }
-  } /*else if (x2 < x1 && y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [1.5, ["f"], "up-left"];
-    } else if (nodeOne.direction === "right") {
-      return [2.5, ["l", "f"], "up-left"];
-    } else if (nodeOne.direction === "left") {
-      return [1.5, ["r", "f"], "up-left"];
-    } else if (nodeOne.direction === "down") {
-      return [2.5, ["r", "r", "f"], "up-left"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2, null, "up-left"];
-    } else if (nodeOne.direction === "down-right") {
-      return [3, null, "up-left"];
-    } else if (nodeOne.direction === "up-left") {
-      return [1, null, "up-left"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2, null, "up-left"];
-    }
-  } else if (x2 < x1 && y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [1.5, ["f"], "up-right"];
-    } else if (nodeOne.direction === "right") {
-      return [1.5, ["l", "f"], "up-right"];
-    } else if (nodeOne.direction === "left") {
-      return [2.5, ["r", "f"], "up-right"];
-    } else if (nodeOne.direction === "down") {
-      return [2.5, ["r", "r", "f"], "up-right"];
-    } else if (nodeOne.direction === "up-right") {
-      return [1, null, "up-right"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2, null, "up-right"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2, null, "up-right"];
-    } else if (nodeOne.direction === "down-left") {
-      return [3, null, "up-right"];
-    }
-  } else if (x2 > x1 && y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [2.5, ["f"], "down-right"];
-    } else if (nodeOne.direction === "right") {
-      return [1.5, ["l", "f"], "down-right"];
-    } else if (nodeOne.direction === "left") {
-      return [2.5, ["r", "f"], "down-right"];
-    } else if (nodeOne.direction === "down") {
-      return [1.5, ["r", "r", "f"], "down-right"];
-    } else if (nodeOne.direction === "up-right") {
-      return [2, null, "down-right"];
-    } else if (nodeOne.direction === "down-right") {
-      return [1, null, "down-right"];
-    } else if (nodeOne.direction === "up-left") {
-      return [3, null, "down-right"];
-    } else if (nodeOne.direction === "down-left") {
-      return [2, null, "down-right"];
-    }
-  } else if (x2 > x1 && y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [2.5, ["f"], "down-left"];
-    } else if (nodeOne.direction === "right") {
-      return [2.5, ["l", "f"], "down-left"];
-    } else if (nodeOne.direction === "left") {
-      return [1.5, ["r", "f"], "down-left"];
-    } else if (nodeOne.direction === "down") {
-      return [1.5, ["r", "r", "f"], "down-left"];
-    } else if (nodeOne.direction === "up-right") {
-      return [3, null, "down-left"];
-    } else if (nodeOne.direction === "down-right") {
-      return [2, null, "down-left"];
-    } else if (nodeOne.direction === "up-left") {
-      return [2, null, "down-left"];
-    } else if (nodeOne.direction === "down-left") {
-      return [1, null, "down-left"];
-    }
-  }*/
-}
-
-function manhattanDistance(nodeOne, nodeTwo) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xOne = nodeOneCoordinates[0];
-  let xTwo = nodeTwoCoordinates[0];
-  let yOne = nodeOneCoordinates[1];
-  let yTwo = nodeTwoCoordinates[1];
-
-  let xChange = Math.abs(xOne - xTwo);
-  let yChange = Math.abs(yOne - yTwo);
-
-  return (xChange + yChange);
-}
-
-
-
-module.exports = astar;
-
-},{}],7:[function(require,module,exports){
-const astar = require("./astar");
-
-function bidirectional(nodes, start, target, nodesToAnimate, boardArray, name, heuristic, board) {
-  if (name === "astar") return astar(nodes, start, target, nodesToAnimate, boardArray, name)
-  if (!start || !target || start === target) {
-    return false;
-  }
-  nodes[start].distance = 0;
-  nodes[start].direction = "right";
-  nodes[target].otherdistance = 0;
-  nodes[target].otherdirection = "left";
-  let visitedNodes = {};
-  let unvisitedNodesOne = Object.keys(nodes);
-  let unvisitedNodesTwo = Object.keys(nodes);
-  while (unvisitedNodesOne.length && unvisitedNodesTwo.length) {
-    let currentNode = closestNode(nodes, unvisitedNodesOne);
-    let secondCurrentNode = closestNodeTwo(nodes, unvisitedNodesTwo);
-    while ((currentNode.status === "wall" || secondCurrentNode.status === "wall") && unvisitedNodesOne.length && unvisitedNodesTwo.length) {
-      if (currentNode.status === "wall") currentNode = closestNode(nodes, unvisitedNodesOne);
-      if (secondCurrentNode.status === "wall") secondCurrentNode = closestNodeTwo(nodes, unvisitedNodesTwo);
-    }
-    if (currentNode.distance === Infinity || secondCurrentNode.otherdistance === Infinity) {
-      return false;
-    }
-    nodesToAnimate.push(currentNode);
-    nodesToAnimate.push(secondCurrentNode);
-    currentNode.status = "visited";
-    secondCurrentNode.status = "visited";
-    if (visitedNodes[currentNode.id]) {
-      board.middleNode = currentNode.id;
-      return "success";
-    } else if (visitedNodes[secondCurrentNode.id]) {
-      board.middleNode = secondCurrentNode.id;
-      return "success";
-    } else if (currentNode === secondCurrentNode) {
-      board.middleNode = secondCurrentNode.id;
-      return "success";
-    }
-    visitedNodes[currentNode.id] = true;
-    visitedNodes[secondCurrentNode.id] = true;
-    updateNeighbors(nodes, currentNode, boardArray, target, name, start, heuristic);
-    updateNeighborsTwo(nodes, secondCurrentNode, boardArray, start, name, target, heuristic);
-  }
-}
-
-function closestNode(nodes, unvisitedNodes) {
-  let currentClosest, index;
-  for (let i = 0; i < unvisitedNodes.length; i++) {
-    if (!currentClosest || currentClosest.distance > nodes[unvisitedNodes[i]].distance) {
-      currentClosest = nodes[unvisitedNodes[i]];
-      index = i;
-    }
-  }
-  unvisitedNodes.splice(index, 1);
-  return currentClosest;
-}
-
-function closestNodeTwo(nodes, unvisitedNodes) {
-  let currentClosest, index;
-  for (let i = 0; i < unvisitedNodes.length; i++) {
-    if (!currentClosest || currentClosest.otherdistance > nodes[unvisitedNodes[i]].otherdistance) {
-      currentClosest = nodes[unvisitedNodes[i]];
-      index = i;
-    }
-  }
-  unvisitedNodes.splice(index, 1);
-  return currentClosest;
-}
-
-function updateNeighbors(nodes, node, boardArray, target, name, start, heuristic) {
-  let neighbors = getNeighbors(node.id, nodes, boardArray);
-  for (let neighbor of neighbors) {
-    updateNode(node, nodes[neighbor], nodes[target], name, nodes, nodes[start], heuristic, boardArray);
-  }
-}
-
-function updateNeighborsTwo(nodes, node, boardArray, target, name, start, heuristic) {
-  let neighbors = getNeighbors(node.id, nodes, boardArray);
-  for (let neighbor of neighbors) {
-    updateNodeTwo(node, nodes[neighbor], nodes[target], name, nodes, nodes[start], heuristic, boardArray);
-  }
-}
-
-function updateNode(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
-  let distance = getDistance(currentNode, targetNode);
-  let weight = targetNode.weight === 15 ? 15 : 1;
-  let distanceToCompare = currentNode.distance + (weight + distance[0]) * manhattanDistance(targetNode, actualTargetNode);
-  if (distanceToCompare < targetNode.distance) {
-    targetNode.distance = distanceToCompare;
-    targetNode.previousNode = currentNode.id;
-    targetNode.path = distance[1];
-    targetNode.direction = distance[2];
-  }
-}
-
-function updateNodeTwo(currentNode, targetNode, actualTargetNode, name, nodes, actualStartNode, heuristic, boardArray) {
-  let distance = getDistanceTwo(currentNode, targetNode);
-  let weight = targetNode.weight === 15 ? 15 : 1;
-  let distanceToCompare = currentNode.otherdistance + (weight + distance[0]) * manhattanDistance(targetNode, actualTargetNode);
-  if (distanceToCompare < targetNode.otherdistance) {
-    targetNode.otherdistance = distanceToCompare;
-    targetNode.otherpreviousNode = currentNode.id;
-    targetNode.path = distance[1];
-    targetNode.otherdirection = distance[2];
-  }
-}
-
-function getNeighbors(id, nodes, boardArray) {
-  let coordinates = id.split("-");
-  let x = parseInt(coordinates[0]);
-  let y = parseInt(coordinates[1]);
-  let neighbors = [];
-  let potentialNeighbor;
-  if (boardArray[x - 1] && boardArray[x - 1][y]) {
-    potentialNeighbor = `${(x - 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x + 1] && boardArray[x + 1][y]) {
-    potentialNeighbor = `${(x + 1).toString()}-${y.toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y - 1]) {
-    potentialNeighbor = `${x.toString()}-${(y - 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  if (boardArray[x][y + 1]) {
-    potentialNeighbor = `${x.toString()}-${(y + 1).toString()}`
-    if (nodes[potentialNeighbor].status !== "wall") neighbors.push(potentialNeighbor);
-  }
-  return neighbors;
-}
-
-function getDistance(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1) {
-    if (nodeOne.direction === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.direction === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    }
-  } else if (x2 > x1) {
-    if (nodeOne.direction === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.direction === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.direction === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.direction === "down") {
-      return [1, ["f"], "down"];
-    }
-  }
-  if (y2 < y1) {
-    if (nodeOne.direction === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.direction === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.direction === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["r", "f"], "left"];
-    }
-  } else if (y2 > y1) {
-    if (nodeOne.direction === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.direction === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.direction === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.direction === "down") {
-      return [2, ["l", "f"], "right"];
-    }
-  }
-}
-
-function getDistanceTwo(nodeOne, nodeTwo) {
-  let currentCoordinates = nodeOne.id.split("-");
-  let targetCoordinates = nodeTwo.id.split("-");
-  let x1 = parseInt(currentCoordinates[0]);
-  let y1 = parseInt(currentCoordinates[1]);
-  let x2 = parseInt(targetCoordinates[0]);
-  let y2 = parseInt(targetCoordinates[1]);
-  if (x2 < x1) {
-    if (nodeOne.otherdirection === "up") {
-      return [1, ["f"], "up"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [2, ["l", "f"], "up"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [2, ["r", "f"], "up"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [3, ["r", "r", "f"], "up"];
-    }
-  } else if (x2 > x1) {
-    if (nodeOne.otherdirection === "up") {
-      return [3, ["r", "r", "f"], "down"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [2, ["r", "f"], "down"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [2, ["l", "f"], "down"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [1, ["f"], "down"];
-    }
-  }
-  if (y2 < y1) {
-    if (nodeOne.otherdirection === "up") {
-      return [2, ["l", "f"], "left"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [3, ["l", "l", "f"], "left"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [1, ["f"], "left"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [2, ["r", "f"], "left"];
-    }
-  } else if (y2 > y1) {
-    if (nodeOne.otherdirection === "up") {
-      return [2, ["r", "f"], "right"];
-    } else if (nodeOne.otherdirection === "right") {
-      return [1, ["f"], "right"];
-    } else if (nodeOne.otherdirection === "left") {
-      return [3, ["r", "r", "f"], "right"];
-    } else if (nodeOne.otherdirection === "down") {
-      return [2, ["l", "f"], "right"];
-    }
-  }
-}
-
-function manhattanDistance(nodeOne, nodeTwo) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xChange = Math.abs(nodeOneCoordinates[0] - nodeTwoCoordinates[0]);
-  let yChange = Math.abs(nodeOneCoordinates[1] - nodeTwoCoordinates[1]);
-  return (xChange + yChange);
-}
-
-function weightedManhattanDistance(nodeOne, nodeTwo, nodes) {
-  let nodeOneCoordinates = nodeOne.id.split("-").map(ele => parseInt(ele));
-  let nodeTwoCoordinates = nodeTwo.id.split("-").map(ele => parseInt(ele));
-  let xChange = Math.abs(nodeOneCoordinates[0] - nodeTwoCoordinates[0]);
-  let yChange = Math.abs(nodeOneCoordinates[1] - nodeTwoCoordinates[1]);
-
-  if (nodeOneCoordinates[0] < nodeTwoCoordinates[0] && nodeOneCoordinates[1] < nodeTwoCoordinates[1]) {
-
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] < nodeTwoCoordinates[0] && nodeOneCoordinates[1] >= nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx <= nodeTwoCoordinates[0]; currentx++) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] >= nodeTwoCoordinates[0] && nodeOneCoordinates[1] < nodeTwoCoordinates[1]) {
-    let additionalxChange = 0,
-        additionalyChange = 0;
-    for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-      let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-
-    let otherAdditionalxChange = 0,
-        otherAdditionalyChange = 0;
-    for (let currenty = nodeOneCoordinates[1]; currenty <= nodeTwoCoordinates[1]; currenty++) {
-      let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-      let currentNode = nodes[currentId];
-      additionalyChange += currentNode.weight;
-    }
-    for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-      let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-      let currentNode = nodes[currentId];
-      additionalxChange += currentNode.weight;
-    }
-
-    if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-      xChange += additionalxChange;
-      yChange += additionalyChange;
-    } else {
-      xChange += otherAdditionalxChange;
-      yChange += otherAdditionalyChange;
-    }
-  } else if (nodeOneCoordinates[0] >= nodeTwoCoordinates[0] && nodeOneCoordinates[1] >= nodeTwoCoordinates[1]) {
-      let additionalxChange = 0,
-          additionalyChange = 0;
-      for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-        let currentId = `${currentx}-${nodeOne.id.split("-")[1]}`;
-        let currentNode = nodes[currentId];
-        additionalxChange += currentNode.weight;
-      }
-      for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-        let currentId = `${nodeTwoCoordinates[0]}-${currenty}`;
-        let currentNode = nodes[currentId];
-        additionalyChange += currentNode.weight;
-      }
-
-      let otherAdditionalxChange = 0,
-          otherAdditionalyChange = 0;
-      for (let currenty = nodeOneCoordinates[1]; currenty >= nodeTwoCoordinates[1]; currenty--) {
-        let currentId = `${nodeOne.id.split("-")[0]}-${currenty}`;
-        let currentNode = nodes[currentId];
-        additionalyChange += currentNode.weight;
-      }
-      for (let currentx = nodeOneCoordinates[0]; currentx >= nodeTwoCoordinates[0]; currentx--) {
-        let currentId = `${currentx}-${nodeTwoCoordinates[1]}`;
-        let currentNode = nodes[currentId];
-        additionalxChange += currentNode.weight;
-      }
-
-      if (additionalxChange + additionalyChange < otherAdditionalxChange + otherAdditionalyChange) {
-        xChange += additionalxChange;
-        yChange += additionalyChange;
-      } else {
-        xChange += otherAdditionalxChange;
-        yChange += otherAdditionalyChange;
-      }
-    }
-
-
-  return xChange + yChange;
-
-
-}
-
-module.exports = bidirectional;
-
-},{"./astar":6}],8:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 function unweightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name) {
   if (!start || !target || start === target) {
     return false;
@@ -2172,11 +1131,8 @@ function getNeighbors(id, nodes, boardArray, name) {
 
 module.exports = unweightedSearchAlgorithm;
 
-},{}],9:[function(require,module,exports){
-const astar = require("./astar");
-
+},{}],6:[function(require,module,exports){
 function weightedSearchAlgorithm(nodes, start, target, nodesToAnimate, boardArray, name, heuristic) {
-  if (name === "astar") return astar(nodes, start, target, nodesToAnimate, boardArray, name)
   if (!start || !target || start === target) {
     return false;
   }
@@ -2497,4 +1453,4 @@ function weightedManhattanDistance(nodeOne, nodeTwo, nodes) {
 
 module.exports = weightedSearchAlgorithm;
 
-},{"./astar":6}]},{},[3]);
+},{}]},{},[2]);

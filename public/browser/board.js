@@ -1,10 +1,7 @@
 const Node = require("./node");
 const launchAnimations = require("./animations/launchAnimations");
-const launchInstantAnimations = require("./animations/launchInstantAnimations");
 const weightedSearchAlgorithm = require("./pathfindingAlgorithms/weightedSearchAlgorithm");
 const unweightedSearchAlgorithm = require("./pathfindingAlgorithms/unweightedSearchAlgorithm");
-const astar = require("./pathfindingAlgorithms/astar");
-const bidirectional = require("./pathfindingAlgorithms/bidirectional");
 const getDistance = require("./getDistance");
 
 function Board(height, width) {
@@ -198,56 +195,17 @@ Board.prototype.changeNormalNode = function(currentNode) {
 
 Board.prototype.drawShortestPath = function(targetNodeId, startNodeId, object) {
   let currentNode;
-  if (this.currentAlgorithm !== "bidirectional") {
-    currentNode = this.nodes[this.nodes[targetNodeId].previousNode];
-    if (object) {
-      while (currentNode.id !== startNodeId) {
-        this.objectShortestPathNodesToAnimate.unshift(currentNode);
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-    } else {
-      while (currentNode.id !== startNodeId) {
-        this.shortestPathNodesToAnimate.unshift(currentNode);
-        document.getElementById(currentNode.id).className = `shortest-path`;
-        currentNode = this.nodes[currentNode.previousNode];
-      }
+  currentNode = this.nodes[this.nodes[targetNodeId].previousNode];
+  if (object) {
+    while (currentNode.id !== startNodeId) {
+      this.objectShortestPathNodesToAnimate.unshift(currentNode);
+      currentNode = this.nodes[currentNode.previousNode];
     }
   } else {
-    if (this.middleNode !== this.target && this.middleNode !== this.start) {
-      currentNode = this.nodes[this.nodes[this.middleNode].previousNode];
-      secondCurrentNode = this.nodes[this.nodes[this.middleNode].otherpreviousNode];
-      if (secondCurrentNode.id === this.target) {
-        this.nodes[this.target].direction = getDistance(this.nodes[this.middleNode], this.nodes[this.target])[2];
-      }
-      if (this.nodes[this.middleNode].weight === 0) {
-        document.getElementById(this.middleNode).className = `shortest-path`;
-      } else {
-        document.getElementById(this.middleNode).className = `shortest-path weight`;
-      }
-      while (currentNode.id !== startNodeId) {
-        this.shortestPathNodesToAnimate.unshift(currentNode);
-        document.getElementById(currentNode.id).className = `shortest-path`;
-        currentNode = this.nodes[currentNode.previousNode];
-      }
-      while (secondCurrentNode.id !== targetNodeId) {
-        this.shortestPathNodesToAnimate.unshift(secondCurrentNode);
-        document.getElementById(secondCurrentNode.id).className = `shortest-path`;
-        if (secondCurrentNode.otherpreviousNode === targetNodeId) {
-          if (secondCurrentNode.otherdirection === "left") {
-            secondCurrentNode.direction = "right";
-          } else if (secondCurrentNode.otherdirection === "right") {
-            secondCurrentNode.direction = "left";
-          } else if (secondCurrentNode.otherdirection === "up") {
-            secondCurrentNode.direction = "down";
-          } else if (secondCurrentNode.otherdirection === "down") {
-            secondCurrentNode.direction = "up";
-          }
-          this.nodes[this.target].direction = getDistance(secondCurrentNode, this.nodes[this.target])[2];
-        }
-        secondCurrentNode = this.nodes[secondCurrentNode.otherpreviousNode]
-      }
-    } else {
-      document.getElementById(this.nodes[this.target].previousNode).className = `shortest-path`;
+    while (currentNode.id !== startNodeId) {
+      this.shortestPathNodesToAnimate.unshift(currentNode);
+      document.getElementById(currentNode.id).className = `shortest-path`;
+      currentNode = this.nodes[currentNode.previousNode];
     }
   }
 };
@@ -271,63 +229,19 @@ Board.prototype.addShortestPath = function(targetNodeId, startNodeId, object) {
 Board.prototype.drawShortestPathTimeout = function(targetNodeId, startNodeId, type, object) {
   let board = this;
   let currentNode;
-  let secondCurrentNode;
   let currentNodesToAnimate;
 
-  if (board.currentAlgorithm !== "bidirectional") {
-    currentNode = board.nodes[board.nodes[targetNodeId].previousNode];
-    if (object) {
-      board.objectShortestPathNodesToAnimate.push("object");
-      currentNodesToAnimate = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
-    } else {
-      currentNodesToAnimate = [];
-      while (currentNode.id !== startNodeId) {
-        currentNodesToAnimate.unshift(currentNode);
-        currentNode = board.nodes[currentNode.previousNode];
-      }
-    }
-  } else {
-    if (board.middleNode !== board.target && board.middleNode !== board.start) {
-      currentNode = board.nodes[board.nodes[board.middleNode].previousNode];
-      secondCurrentNode = board.nodes[board.nodes[board.middleNode].otherpreviousNode];
-      if (secondCurrentNode.id === board.target) {
-        board.nodes[board.target].direction = getDistance(board.nodes[board.middleNode], board.nodes[board.target])[2];
-      }
-      if (object) {
-
-      } else {
-        currentNodesToAnimate = [];
-        board.nodes[board.middleNode].direction = getDistance(currentNode, board.nodes[board.middleNode])[2];
-        while (currentNode.id !== startNodeId) {
-          currentNodesToAnimate.unshift(currentNode);
-          currentNode = board.nodes[currentNode.previousNode];
-        }
-        currentNodesToAnimate.push(board.nodes[board.middleNode]);
-        while (secondCurrentNode.id !== targetNodeId) {
-          if (secondCurrentNode.otherdirection === "left") {
-            secondCurrentNode.direction = "right";
-          } else if (secondCurrentNode.otherdirection === "right") {
-            secondCurrentNode.direction = "left";
-          } else if (secondCurrentNode.otherdirection === "up") {
-            secondCurrentNode.direction = "down";
-          } else if (secondCurrentNode.otherdirection === "down") {
-            secondCurrentNode.direction = "up";
-          }
-          currentNodesToAnimate.push(secondCurrentNode);
-          if (secondCurrentNode.otherpreviousNode === targetNodeId) {
-            board.nodes[board.target].direction = getDistance(secondCurrentNode, board.nodes[board.target])[2];
-          }
-          secondCurrentNode = board.nodes[secondCurrentNode.otherpreviousNode]
-        }
-    }
+  currentNode = board.nodes[board.nodes[targetNodeId].previousNode];
+  if (object) {
+    board.objectShortestPathNodesToAnimate.push("object");
+    currentNodesToAnimate = board.objectShortestPathNodesToAnimate.concat(board.shortestPathNodesToAnimate);
   } else {
     currentNodesToAnimate = [];
-    let target = board.nodes[board.target];
-    currentNodesToAnimate.push(board.nodes[target.previousNode], target);
+    while (currentNode.id !== startNodeId) {
+      currentNodesToAnimate.unshift(currentNode);
+      currentNode = board.nodes[currentNode.previousNode];
+    }
   }
-
-}
-
 
   timeout(0);
 
@@ -421,28 +335,10 @@ Board.prototype.clearPath = function(clickedButton) {
     } else {
       this.clearPath("clickedButton");
       this.toggleButtons();
-      let weightedAlgorithms = ["dijkstra", "CLA", "greedy"];
+      let weightedAlgorithms = ["dijkstra", "greedy"];
       let unweightedAlgorithms = ["dfs", "bfs"];
       let success;
-      if (this.currentAlgorithm === "bidirectional") {
-        if (!this.numberOfObjects) {
-          success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-          launchAnimations(this, success, "weighted");
-        } else {
-          this.isObject = true;
-        }
-        this.algoDone = true;
-      } else if (this.currentAlgorithm === "astar") {
-        if (!this.numberOfObjects) {
-          success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-          launchAnimations(this, success, "weighted");
-        } else {
-          this.isObject = true;
-          success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-          launchAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
-        }
-        this.algoDone = true;
-      } else if (weightedAlgorithms.includes(this.currentAlgorithm)) {
+      if (weightedAlgorithms.includes(this.currentAlgorithm)) {
         if (!this.numberOfObjects) {
           success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
           launchAnimations(this, success, "weighted");
@@ -467,7 +363,7 @@ Board.prototype.clearPath = function(clickedButton) {
   }
 
   this.algoDone = false;
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     currentNode.previousNode = null;
     currentNode.distance = Infinity;
@@ -489,12 +385,12 @@ Board.prototype.clearPath = function(clickedButton) {
       currentNode.status = "unvisited";
       currentHTMLNode.className = "unvisited weight";
     }
-  });
+  }
 };
 
 Board.prototype.clearWalls = function() {
   this.clearPath("clickedButton");
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     let currentHTMLNode = document.getElementById(id);
     if (currentNode.status === "wall" || currentNode.weight === 15) {
@@ -502,11 +398,11 @@ Board.prototype.clearWalls = function() {
       currentNode.weight = 0;
       currentHTMLNode.className = "unvisited";
     }
-  });
-}
+  }
+};
 
 Board.prototype.clearWeights = function() {
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     let currentHTMLNode = document.getElementById(id);
     if (currentNode.weight === 15) {
@@ -514,11 +410,11 @@ Board.prototype.clearWeights = function() {
       currentNode.weight = 0;
       currentHTMLNode.className = "unvisited";
     }
-  });
-}
+  }
+};
 
 Board.prototype.clearNodeStatuses = function() {
-  Object.keys(this.nodes).forEach(id => {
+  for (let id in this.nodes) {
     let currentNode = this.nodes[id];
     currentNode.previousNode = null;
     currentNode.distance = Infinity;
@@ -530,58 +426,12 @@ Board.prototype.clearNodeStatuses = function() {
     if (!relevantStatuses.includes(currentNode.status)) {
       currentNode.status = "unvisited";
     }
-  })
+  }
 };
 
-Board.prototype.instantAlgorithm = function() {
-  let weightedAlgorithms = ["dijkstra", "CLA", "greedy"];
-  let unweightedAlgorithms = ["dfs", "bfs"];
-  let success;
-  if (this.currentAlgorithm === "bidirectional") {
-    if (!this.numberOfObjects) {
-      success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-    }
-    this.algoDone = true;
-  } else if (this.currentAlgorithm === "astar") {
-    if (!this.numberOfObjects) {
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted", "object", this.currentAlgorithm);
-    }
-    this.algoDone = true;
-  }
-  if (weightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!this.numberOfObjects) {
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted");
-    } else {
-      this.isObject = true;
-      success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-      launchInstantAnimations(this, success, "weighted", "object", this.currentAlgorithm, this.currentHeuristic);
-    }
-    this.algoDone = true;
-  } else if (unweightedAlgorithms.includes(this.currentAlgorithm)) {
-    if (!this.numberOfObjects) {
-      success = unweightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm);
-      launchInstantAnimations(this, success, "unweighted");
-    } else {
-      this.isObject = true;
-      success = unweightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm);
-      launchInstantAnimations(this, success, "unweighted", "object", this.currentAlgorithm);
-    }
-    this.algoDone = true;
-  }
-};
 
 Board.prototype.redoAlgorithm = function() {
   this.clearPath();
-  this.instantAlgorithm();
 };
 
 Board.prototype.reset = function(objectNotTransparent) {
@@ -608,7 +458,7 @@ Board.prototype.resetHTMLNodes = function() {
 Board.prototype.changeStartNodeImages = function() {
   let unweighted = ["bfs", "dfs"];
   let strikethrough = ["bfs", "dfs"];
-  let guaranteed = ["dijkstra", "astar"];
+  let guaranteed = ["dijkstra"];
   let name = "";
   if (this.currentAlgorithm === "bfs") {
     name = "Breath-first Search";
@@ -616,16 +466,8 @@ Board.prototype.changeStartNodeImages = function() {
     name = "Depth-first Search";
   } else if (this.currentAlgorithm === "dijkstra") {
     name = "Dijkstra's Algorithm";
-  } else if (this.currentAlgorithm === "astar") {
-    name = "A* Search";
   } else if (this.currentAlgorithm === "greedy") {
     name = "Greedy Best-first Search";
-  } else if (this.currentAlgorithm === "CLA" && this.currentHeuristic !== "extraPoweredManhattanDistance") {
-    name = "Swarm Algorithm";
-  } else if (this.currentAlgorithm === "CLA" && this.currentHeuristic === "extraPoweredManhattanDistance") {
-    name = "Convergent Swarm Algorithm";
-  } else if (this.currentAlgorithm === "bidirectional") {
-    name = "Bidirectional Swarm Algorithm";
   }
   if (unweighted.includes(this.currentAlgorithm)) {
     if (this.currentAlgorithm === "dfs") {
@@ -640,7 +482,7 @@ Board.prototype.changeStartNodeImages = function() {
       document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("triangle", "spaceship");
     }
   } else {
-    if (this.currentAlgorithm === "greedy" || this.currentAlgorithm === "CLA") {
+    if (this.currentAlgorithm === "greedy") {
       document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
     }
     document.getElementById("weightLegend").className = "";
@@ -650,15 +492,8 @@ Board.prototype.changeStartNodeImages = function() {
       document.styleSheets["1"].rules[j].style.backgroundImage = backgroundImage.replace("spaceship", "triangle");
     }
   }
-  if (this.currentAlgorithm === "bidirectional") {
-
-    document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>does not guarantee</b></i> the shortest path!`;
-    document.getElementById("bombLegend").className = "strikethrough";
-    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav disabledA";
-  } else {
-    document.getElementById("bombLegend").className = "";
-    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
-  }
+  document.getElementById("bombLegend").className = "";
+  document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
   if (guaranteed.includes(this.currentAlgorithm)) {
     document.getElementById("algorithmDescriptor").innerHTML = `${name} is <i><b>weighted</b></i> and <i><b>guarantees</b></i> the shortest path!`;
   }
@@ -729,30 +564,10 @@ Board.prototype.toggleButtons = function() {
       } else {
         this.clearPath("clickedButton");
         this.toggleButtons();
-        let weightedAlgorithms = ["dijkstra", "CLA", "CLA", "greedy"];
+        let weightedAlgorithms = ["dijkstra", "greedy"];
         let unweightedAlgorithms = ["dfs", "bfs"];
         let success;
-        if (this.currentAlgorithm === "bidirectional") {
-          if (!this.numberOfObjects) {
-            success = bidirectional(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-            launchAnimations(this, success, "weighted");
-          } else {
-            this.isObject = true;
-            success = bidirectional(this.nodes, this.start, this.object, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic, this);
-            launchAnimations(this, success, "weighted");
-          }
-          this.algoDone = true;
-        } else if (this.currentAlgorithm === "astar") {
-          if (!this.numberOfObjects) {
-            success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            launchAnimations(this, success, "weighted");
-          } else {
-            this.isObject = true;
-            success = weightedSearchAlgorithm(this.nodes, this.start, this.object, this.objectNodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
-            launchAnimations(this, success, "weighted", "object", this.currentAlgorithm);
-          }
-          this.algoDone = true;
-        } else if (weightedAlgorithms.includes(this.currentAlgorithm)) {
+        if (weightedAlgorithms.includes(this.currentAlgorithm)) {
           if (!this.numberOfObjects) {
             success = weightedSearchAlgorithm(this.nodes, this.start, this.target, this.nodesToAnimate, this.boardArray, this.currentAlgorithm, this.currentHeuristic);
             launchAnimations(this, success, "weighted");
@@ -791,47 +606,11 @@ Board.prototype.toggleButtons = function() {
       document.getElementById("adjustSpeed").innerHTML = 'Speed: Slow<span class="caret"></span>';
     }
 
-    document.getElementById("startButtonBidirectional").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Bidirectional Swarm!</button>'
-      this.currentAlgorithm = "bidirectional";
-      this.currentHeuristic = "manhattanDistance";
-      if (this.numberOfObjects) {
-        let objectNodeId = this.object;
-        document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add a Bomb</a></li>';
-        document.getElementById(objectNodeId).className = "unvisited";
-        this.object = null;
-        this.numberOfObjects = 0;
-        this.nodes[objectNodeId].status = "unvisited";
-        this.isObject = false;
-      }
-      this.clearPath("clickedButton");
-      this.changeStartNodeImages();
-    }
+
 
     document.getElementById("startButtonDijkstra").onclick = () => {
       document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Dijkstra\'s!</button>'
       this.currentAlgorithm = "dijkstra";
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonAStar").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Swarm!</button>'
-      this.currentAlgorithm = "CLA";
-      this.currentHeuristic = "manhattanDistance"
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonAStar2").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize A*!</button>'
-      this.currentAlgorithm = "astar";
-      this.currentHeuristic = "poweredManhattanDistance"
-      this.changeStartNodeImages();
-    }
-
-    document.getElementById("startButtonAStar3").onclick = () => {
-      document.getElementById("startButtonStart").innerHTML = '<button id="actualStartButton" class="btn btn-default navbar-btn" type="button">Visualize Convergent Swarm!</button>'
-      this.currentAlgorithm = "CLA";
-      this.currentHeuristic = "extraPoweredManhattanDistance"
       this.changeStartNodeImages();
     }
 
@@ -869,7 +648,7 @@ Board.prototype.toggleButtons = function() {
       let start = Math.floor(height / 2).toString() + "-" + Math.floor(width / 4).toString();
       let target = Math.floor(height / 2).toString() + "-" + Math.floor(3 * width / 4).toString();
 
-        Object.keys(this.nodes).forEach(id => {
+        for (let id in this.nodes) {
           let currentNode = this.nodes[id];
           let currentHTMLNode = document.getElementById(id);
           if (id === start) {
@@ -893,7 +672,7 @@ Board.prototype.toggleButtons = function() {
           currentNode.relatesToObject = false;
           currentNode.overwriteObjectRelation = false;
 
-        });
+        }
       this.start = start;
       this.target = target;
       this.object = null;
@@ -925,31 +704,29 @@ Board.prototype.toggleButtons = function() {
 
     document.getElementById("startButtonAddObject").onclick = () => {
       let innerHTML = document.getElementById("startButtonAddObject").innerHTML;
-      if (this.currentAlgorithm !== "bidirectional") {
-        if (innerHTML.includes("Add")) {
-          let r = Math.floor(this.height / 2);
-          let c = Math.floor(2 * this.width / 4);
-          let objectNodeId = `${r}-${c}`;
-          if (this.target === objectNodeId || this.start === objectNodeId || this.numberOfObjects === 1) {
-            console.log("Failure to place object.");
-          } else {
-            document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Remove Bomb</a></li>';
-            this.clearPath("clickedButton");
-            this.object = objectNodeId;
-            this.numberOfObjects = 1;
-            this.nodes[objectNodeId].status = "object";
-            document.getElementById(objectNodeId).className = "object";
-          }
+      if (innerHTML.includes("Add")) {
+        let r = Math.floor(this.height / 2);
+        let c = Math.floor(2 * this.width / 4);
+        let objectNodeId = `${r}-${c}`;
+        if (this.target === objectNodeId || this.start === objectNodeId || this.numberOfObjects === 1) {
+          console.log("Failure to place object.");
         } else {
-          let objectNodeId = this.object;
-          document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add Bomb</a></li>';
-          document.getElementById(objectNodeId).className = "unvisited";
-          this.object = null;
-          this.numberOfObjects = 0;
-          this.nodes[objectNodeId].status = "unvisited";
-          this.isObject = false;
+          document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Remove Bomb</a></li>';
           this.clearPath("clickedButton");
+          this.object = objectNodeId;
+          this.numberOfObjects = 1;
+          this.nodes[objectNodeId].status = "object";
+          document.getElementById(objectNodeId).className = "object";
         }
+      } else {
+        let objectNodeId = this.object;
+        document.getElementById("startButtonAddObject").innerHTML = '<a href="#">Add Bomb</a></li>';
+        document.getElementById(objectNodeId).className = "unvisited";
+        this.object = null;
+        this.numberOfObjects = 0;
+        this.nodes[objectNodeId].status = "unvisited";
+        this.isObject = false;
+        this.clearPath("clickedButton");
       }
 
     }
@@ -957,20 +734,11 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonClearPath").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonClearWalls").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonClearBoard").className = "navbar-inverse navbar-nav";
-    if (this.currentAlgorithm !== "bidirectional") {
-      document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
-    }
+    document.getElementById("startButtonAddObject").className = "navbar-inverse navbar-nav";
 
     document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonBFS").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar2").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonAStar3").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustFast").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustAverage").className = "navbar-inverse navbar-nav";
-    document.getElementById("adjustSlow").className = "navbar-inverse navbar-nav";
-    document.getElementById("startButtonBidirectional").className = "navbar-inverse navbar-nav";
     document.getElementById("startButtonGreedy").className = "navbar-inverse navbar-nav";
     document.getElementById("actualStartButton").style.backgroundColor = "";
 
@@ -979,12 +747,8 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonDFS").onclick = null;
     document.getElementById("startButtonBFS").onclick = null;
     document.getElementById("startButtonDijkstra").onclick = null;
-    document.getElementById("startButtonAStar").onclick = null;
     document.getElementById("startButtonGreedy").onclick = null;
     document.getElementById("startButtonAddObject").onclick = null;
-    document.getElementById("startButtonAStar2").onclick = null;
-    document.getElementById("startButtonAStar3").onclick = null;
-    document.getElementById("startButtonBidirectional").onclick = null;
 
     document.getElementById("startButtonClearPath").onclick = null;
     document.getElementById("startButtonClearWalls").onclick = null;
@@ -1005,11 +769,7 @@ Board.prototype.toggleButtons = function() {
     document.getElementById("startButtonDFS").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonBFS").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonDijkstra").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar").className = "navbar-inverse navbar-nav disabledA";
     document.getElementById("startButtonGreedy").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar2").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonAStar3").className = "navbar-inverse navbar-nav disabledA";
-    document.getElementById("startButtonBidirectional").className = "navbar-inverse navbar-nav disabledA";
 
     document.getElementById("actualStartButton").style.backgroundColor = "rgb(185, 15, 15)";
   }
