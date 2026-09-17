@@ -17,7 +17,6 @@ Built with vanilla JavaScript and a tiny Express server.
   - 🔴 **Depth-First Search / DFS** (unweighted) — explores deeply first, does *not* guarantee the shortest path.
 - **Step-by-step animation** — every visited node and the final shortest path animate in real time, with three speed options (Fast / Average / Slow).
 - **Bomb node** — force the path to pass through an extra node before reaching the target.
-- **Built-in tutorial** — a guided walkthrough for first-time users.
 
 ## 🖼️ How It Works (Quick Tour)
 
